@@ -35,6 +35,12 @@ public class Tuple {
 		// load data into spark -> a scalar wrapup
 		JavaRDD<String> originalMessages = sc.parallelize(inputData);
 		
+		// using fluent API
+		originalMessages
+				.mapToPair(rawValue -> new Tuple2<>(rawValue.split(":")[0], 1L))
+				.reduceByKey((curr, accum) -> curr + accum)
+				.foreach(tuple -> System.out.println("tuple " + tuple._1 + " has a value of " + tuple._2));
+				
 		// create a pair RDD
 		JavaPairRDD<String, String> pairRDD = originalMessages.mapToPair(rawValue -> {
 			String[] columns = rawValue.split(":");
