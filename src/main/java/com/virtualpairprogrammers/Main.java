@@ -31,6 +31,9 @@ public class Main {
 		// load data into spark -> a scalar wrapup
 		JavaRDD<Double> myRdd = sc.parallelize(inputData);
 		
+		for (Double var: myRdd.collect()){
+			System.out.println("*" + var);
+		}
 		sc.close();
 
 	}
