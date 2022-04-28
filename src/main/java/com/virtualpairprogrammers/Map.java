@@ -10,15 +10,15 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
 
-public class Main {
+public class Map {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		List<Double> inputData = new ArrayList<Double>();
-		inputData.add(3.5);
-		inputData.add(12.345);
-		inputData.add(50.32);
-		inputData.add(20.345);
+		List<Integer> inputData = new ArrayList<Integer>();
+		inputData.add(3);
+		inputData.add(12);
+		inputData.add(50);
+		inputData.add(20);
 		
 		// configure logging so there is not too much red
 		/// remove unnecessary log from apache
@@ -29,16 +29,20 @@ public class Main {
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
 		// load data into spark -> a scalar wrapup
-		JavaRDD<Double> myRdd = sc.parallelize(inputData);
+		JavaRDD<Integer> myRdd = sc.parallelize(inputData);
 		
 		// reduces rdd
-		Double results = myRdd.reduce((a, b)-> a+b);
-		System.out.println("the result is: " + results);
+		JavaRDD<Double> sqrtRdd= myRdd.map(var -> Math.sqrt(var) );
 
-		for (Double var: myRdd.collect()){
-			System.out.println("*" + var);
-		}
-
+		sqrtRdd.foreach(val -> System.out.println("the value is: " + val));
+		
+		Long count = sqrtRdd.count();
+		System.out.println("total data in the set: " + count);
+		
+		// more spark native way to do the counting
+		JavaRDD<Integer> r = sqrtRdd.map(val -> 1);
+		Integer c = r.reduce((val1, val2) -> val1 + val2);
+		System.out.println("total count of interger is " + c);
 		sc.close();
 
 	}
